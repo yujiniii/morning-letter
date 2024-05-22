@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { PublicDataModule } from './public-data/public-data.module';
 import { NewsModule } from './news/news.module';
+import { FortuneModule } from './fortune/fortune.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { NewsModule } from './news/news.module';
     }),
     PublicDataModule,
     NewsModule,
+    FortuneModule,
   ],
   controllers: [AppController],
   providers: [AppService],

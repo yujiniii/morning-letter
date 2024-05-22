@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "axios": "^1.7.1",
     "node-html-parser": "^6.1.13",
+    "openai": "^4.47.1",
     "qs": "^6.12.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
