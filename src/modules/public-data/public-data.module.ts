@@ -4,5 +4,6 @@ import { PublicDataDustModule } from './public-data-dust/public-data-dust.module
 
 @Module({
   imports: [PublicDataDustModule, PublicDataWeatherModule],
+  exports: [PublicDataDustModule, PublicDataWeatherModule],
 })
 export class PublicDataModule {}
