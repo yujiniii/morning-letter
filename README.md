@@ -27,7 +27,7 @@
 - 오늘의 운세
     - [OpenAi API](https://platform.openai.com/)와 [openai](https://www.npmjs.com/package/openai) 사용해 랜덤으로 운세를 생성
 
-## 남은 작업 (0522기준)
+## 남은 작업
 
 - [ ] DB 연결
 - [ ] 메일 서비스 작성
