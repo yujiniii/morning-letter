@@ -3,6 +3,21 @@ import { ConfigService } from '@nestjs/config';
 import * as qs from 'qs';
 import { City } from '../public-data-helper/city.constant';
 import { PublicDataHelperService } from '../public-data-helper/public-data-helper.service';
+import {
+  WeatherDto,
+  WeatherHourlyDto,
+  WeatherStatusDto,
+} from './public-weather.dto';
+
+type WeatherTimeQuery = {
+  base_date: string;
+  base_time: string;
+};
+
+type WeatherPositionQuery = {
+  nx: number;
+  ny: number;
+};
 
 @Injectable()
 export class PublicDataWeatherService {
@@ -13,14 +28,14 @@ export class PublicDataWeatherService {
     private readonly PublicDataHelperService: PublicDataHelperService,
   ) {}
 
-  async getWeather(city: string) {
+  async getWeather(city: string): Promise<WeatherDto> {
     const serviceKey = this.configService.get<string>('SERVICE_KEY_DECODED');
     let url = `${this.configService.get<string>('WEATHER_DATA_URL')}/${this.GET_WEATHER_BY_CITY}`;
     const { nx, ny } = this.getPosition(city);
     const { base_date, base_time } = this.getDateTimeToday();
     const query = qs.stringify({
       serviceKey,
-      numOfRows: 200,
+      numOfRows: 3000,
       pageNo: 1,
       dataType: 'json',
       base_date,
@@ -29,18 +44,17 @@ export class PublicDataWeatherService {
       ny,
     });
     url += `?${query}`;
-    console.log(url);
     return this.PublicDataHelperService.callApiAndParse(url, this.getParse);
   }
 
-  getPosition(city: string) {
+  getPosition(city: string): WeatherPositionQuery {
     return {
       nx: City[city].nx,
       ny: City[city].ny,
     };
   }
 
-  getDateTimeToday() {
+  getDateTimeToday(): WeatherTimeQuery {
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -52,20 +66,60 @@ export class PublicDataWeatherService {
   }
 
   // todo: type 정의, 응답값 변경 필요
-  getParse(result) {
-    const useCategories = ['TMN', 'TMX', 'POP', 'WSD']; // 최저기온, 최고기온, 강수확률, 풍속
+  getParse(response) {
+    let parsed: WeatherDto = {
+      maxTemp: 0,
+      minTemp: 0,
+      hourly: [],
+    };
 
-    const parsed = [];
-    result.items.item.map((item) => {
-      // useCategories에 포함된 category만 추출
-      if (useCategories.includes(item.category)) {
-        parsed.push({
-          category: item.category,
-          dateTime: `${item.fcstDate}${item.fcstTime}`,
-          value: item.fcstValue,
-        });
+    let rainProbability: WeatherStatusDto[] = [];
+    let sky: WeatherStatusDto[] = [];
+    let pty: WeatherStatusDto[] = []; // 강수형태
+    response.items.item.map((item) => {
+      switch (item.category) {
+        case 'TMN': // 최저기온
+          parsed.minTemp = item.fcstValue;
+          break;
+        case 'TMX': // 최고기온
+          parsed.maxTemp = item.fcstValue;
+          break;
+        case 'POP': // 강수확률
+          rainProbability.push({
+            value: item.fcstValue,
+            time: `${item.fcstTime}`,
+          });
+          break;
+        case 'SKY': // 하늘상태
+          sky.push({
+            value: item.fcstValue,
+            time: `${item.fcstTime}`,
+          });
+          break;
+        case 'PTY': // 강수형태
+          pty.push({
+            value: item.fcstValue,
+            time: `${item.fcstTime}`,
+          });
+          break;
       }
     });
+    parsed.hourly = rainProbability
+      .map((item, index) => {
+        const time = Number(item.time);
+        if (time >= 700 && (time / 100) % 2 === 0) {
+          // 7시 이후, 짝수 시간대만 추출
+          return {
+            time: item.time,
+            rainProbability: item.value,
+            sky: sky[index].value,
+            pty: pty[index].value,
+          };
+        }
+      })
+      // Type Guard
+      .filter((item): item is WeatherHourlyDto => item !== undefined);
+
     return parsed;
   }
 }

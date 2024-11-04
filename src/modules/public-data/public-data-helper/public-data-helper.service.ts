@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs';
 export class PublicDataHelperService {
   constructor(private readonly httpService: HttpService) {}
 
-  getErrorMessage(resultCode: string): string {
+  getErrorMessage(resultCode: string): string | undefined {
     switch (resultCode) {
       case '00':
         break;

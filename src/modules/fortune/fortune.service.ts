@@ -13,32 +13,32 @@ export class FortuneService {
   }
 
   async getFortuneFromOpenAi(): Promise<any> {
+    const { openAiModelId, openAiPromptAssistant, openAiPromptUser } =
+      this.getSafeEnv();
     try {
       const chatCompletion: OpenAI.Chat.ChatCompletion =
         await this.openai.chat.completions.create({
-          model: this.configService.get<string>('OPENAI_MODEL_ID'),
+          model: openAiModelId,
           messages: [
             {
               role: 'user',
               content: [
                 {
                   type: 'text',
-                  text: this.configService.get<string>('OPENAI_PROMPT_USER'),
+                  text: openAiPromptUser,
                 },
               ],
             },
             {
               role: 'assistant',
-              content: this.configService.get<string>(
-                'OPENAI_PROMPT_ASSISTANT',
-              ),
+              content: openAiPromptAssistant,
             },
             {
               role: 'user',
               content: [
                 {
                   type: 'text',
-                  text: this.configService.get<string>('FORTUNE_PROMPT_KOREAN'),
+                  text: openAiPromptUser,
                 },
               ],
             },
@@ -55,5 +55,22 @@ export class FortuneService {
     } catch (err) {
       throw new BadRequestException(err);
     }
+  }
+
+  getSafeEnv() {
+    const openAiModelId = this.configService.get<string>('OPENAI_MODEL_ID');
+    const openAiPromptAssistant = this.configService.get<string>(
+      'OPENAI_PROMPT_ASSISTANT',
+    );
+    const openAiPromptUser =
+      this.configService.get<string>('OPENAI_PROMPT_USER');
+    if (!(openAiModelId && openAiPromptAssistant && openAiPromptUser)) {
+      throw new BadRequestException('env 촥인');
+    }
+    return {
+      openAiModelId,
+      openAiPromptAssistant,
+      openAiPromptUser,
+    };
   }
 }

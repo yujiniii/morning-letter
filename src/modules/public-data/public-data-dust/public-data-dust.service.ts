@@ -4,6 +4,7 @@ import * as qs from 'qs';
 import { DustGrade } from './public-data-dust.constant';
 import { City } from '../public-data-helper/city.constant';
 import { PublicDataHelperService } from '../public-data-helper/public-data-helper.service';
+import { DustDto } from './public-dust.dto';
 
 enum DustApiType {
   GET_DUST_BY_CITY = 'getCtprvnRltmMesureDnsty',
@@ -32,16 +33,15 @@ export class PublicDataDustService {
       ver: '1.0',
     });
     url += `?${query}`;
-    console.log(url);
     return this.PublicDataHelperService.callApiAndParse(url, this.getParse);
   }
 
   // todo: type 정의
-  getParse(result) {
+  getParse(response): DustDto {
     return {
-      pm10: DustGrade[`${result.items[0]?.pm10Grade}`],
-      pm25: DustGrade[`${result.items[0]?.pm25Grade}`],
-      stationName: result.items[0].stationName,
+      pm10: DustGrade[`${response.items[0]?.pm10Grade}`],
+      pm25: DustGrade[`${response.items[0]?.pm25Grade}`],
+      stationName: response.items[0].stationName,
     };
   }
 }
