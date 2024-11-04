@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            color: #545F75;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .header img {
+            width: 100px;
+            border-radius: 50%;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #545F75;
+        }
+
+        .date-box {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .date-box .date-content {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 2px solid #ff6f61;
+            border-radius: 10px;
+            background-color: #FBF8FA;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .emoji {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.5em;
+            color: #ff6f61;
+            margin: 20px 0 30px 0;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 2px;
+            background-color: #ff6f61;
+            margin: 10px auto;
+        }
+
+        .weather, .pollution, .fortune, .news {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+
+        .weather-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .weather-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .hourly-weather {
+            max-width: 400px;
+            display: flex;
+            flex: 0 0 auto;
+            flex-wrap: nowrap;
+            text-align: center;
+            gap: 10px;
+            overflow-x: scroll;
+        }
+
+        .hourly-weather .hourly-weather-content {
+            flex: 0 0 calc(12.5% - 20px);
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 80px;
+        }
+
+        .hourly-weather .hourly-weather-content div {
+            font-size: 0.8em;
+            color: #545F75;
+        }
+
+        .weather-emoji {
+            font-size: 1.5em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+
+        .pollution-content {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .pollution-content div {
+            text-align: center;
+        }
+
+        .pollution-content div span {
+            display: block;
+            font-size: 1.2em;
+            color: #545F75;
+            margin-bottom: 5px;
+        }
+
+        .fortune p {
+            font-size: 1.1rem;
+            color: #545F75;
+            text-align: center;
+        }
+
+        .notice {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .news img {
+            width: 80px;
+            height: auto;
+            border-radius: 10px;
+            margin-right: 10px;
+        }
+
+        .news a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .news-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="<%= headerImage %>" alt="Header Image">
+        <h1>안녕하세요 좋은 아침입니다</h1>
+        <div class="emoji">💌</div>
+    </div>
+    <div class="date-box">
+        <div class="date-content">
+            ✧˚₊꒰ྀིঌ <%= todayDate %> ໒꒱ྀི₊˚✧
+        </div>
+    </div>
+
+
+    <div class="weather">
+        <div class="section-title">날씨</div>
+        <div class="weather-content">
+            <div class="weather-info">
+                <div>최저기온: <%= weather.minTemp %>°C</div>
+                <div style="margin: 0 10px;">|</div>
+                <div>최고기온: <%= weather.maxTemp %>°C</div>
+            </div>
+            <div class="hourly-weather">
+                <% weather.hourly.forEach(function(hour) { %>
+                    <div class="hourly-weather-content">
+                        <div><%= hour.time.slice(0, 2) %>:00</div>
+                        <span class="weather-emoji">
+                            <% if (hour.pty === "0") { %>
+                                <% if(hour.sky === "1") { %> ☀️
+                                <% } %>
+                                <% if(hour.sky === "3") { %> ⛅
+                                <% } %>
+                                <% if(hour.sky === "4") { %> ☁️
+                                <% } %>
+                            <% } else if (hour.pty === "1" ) { %> ☔️
+                            <% } else if (hour.pty === "2" ) { %> ☔️ 🌨
+                            <% } else if (hour.pty === "3" ) { %> 🌨️
+                            <% } else if (hour.pty === "4" ) { %> 🌨️
+                            <% } %>
+                        </span>
+                        <div>비 올 확률</div>
+                        <div><%= hour.rainProbability %>%</div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+        <div class="notice">
+            관측소 정보: <%= weather.stationName %>
+        </div>
+    </div>
+
+
+    <div class="pollution">
+        <div class="section-title">미세먼지</div>
+        <div class="pollution-content">
+            <div>
+                <span>초미세먼지 (PM2.5) </span>
+                <span style="color: <%= dust.pm25.color %>"><%= dust.pm25.grade %></span>
+            </div>
+            <div>
+                <span>미세먼지 (PM10)</span>
+                <span style="color: <%= dust.pm10.color %>"><%= dust.pm10.grade %></span>
+            </div>
+        </div>
+        <div class="notice">
+            관측소 정보: <%= dust.stationName %>
+        </div>
+    </div>
+
+    <div class="fortune">
+        <div class="section-title">오늘의 운세</div>
+        <p><%= fortune %></p>
+    </div>
+
+    <div class="news">
+        <div class="section-title">오늘의 뉴스 헤드라인</div>
+        <div class="notice">
+            뉴스 헤드라인은 <a href="https://news.naver.com/">네이버 뉴스</a>에 접속했을 때 랜덤으로 나오는 기사 10개를 수집합니다.
+        </div>
+        <ul>
+            <% news.forEach(function(item) { %>
+                <li class="news-item">
+                    <img src="<%= item.imgSrc %>" alt="News Image">
+                    <a href="<%= item.href %>"><%= item.headline %></a>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+<div style="text-align: center; margin: 20px 0;">
+    <a href="<%= unsubscribeLink %>" style="color: #666; text-decoration: none;" target="_blank">이메일 수신 거부하기</a>
+</div>
+</body>
+</html>
