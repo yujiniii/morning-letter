@@ -28,6 +28,12 @@
 - 오늘의 운세
     - [OpenAi API](https://platform.openai.com/)와 [openai](https://www.npmjs.com/package/openai) 사용해 랜덤으로 운세를 생성
 
+
+## 화면 미리보기
+<img width="828" alt="메일 예시" src="https://github.com/user-attachments/assets/d00c6cbb-19ea-468f-b772-437f17be0349">
+
+
 ## 남은 작업
 
 - [ ] user 관리 서비스 구현 (구독/구독해제 API)
+- [ ] 
