@@ -14,6 +14,7 @@
 
 - NestJS
 - DB (미정)
+- AWS SES
 
 ### 정보 출처
 
@@ -27,9 +28,6 @@
 - 오늘의 운세
     - [OpenAi API](https://platform.openai.com/)와 [openai](https://www.npmjs.com/package/openai) 사용해 랜덤으로 운세를 생성
 
-## 남은 작업 (0522기준)
+## 남은 작업
 
-- [ ] DB 연결
-- [ ] 메일 서비스 작성
-- [ ] 스케쥴링 작성
-- [ ] 메일 폼 및 구독 페이지 작성 (html)
+- [ ] user 관리 서비스 구현 (구독/구독해제 API)
